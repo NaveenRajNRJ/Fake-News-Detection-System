@@ -133,7 +133,7 @@ Libraries:
 
 ## 👨‍💻 Author
 
-**Naveen Raj P K **
+Naveen Raj P K 
 
 B.Sc Computer Science
 

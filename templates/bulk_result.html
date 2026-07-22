@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bulk News Results</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        table, th, td { border: 1px solid black; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>Bulk News Predictions</h1>
+    {% for table in tables %}
+        {{ table|safe }}
+    {% endfor %}
+    <p><a href="/bulk">Upload Another File</a> | <a href="/">Back to Home</a></p>
+</body>
+</html>

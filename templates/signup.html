@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - NewsGuard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #121212, #1e1e1e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: #00bcd4;
+            margin-bottom: 10px;
+        }
+
+        .signup-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .signup-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00bcd4;
+            font-size: 1.1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00bcd4;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #aaa;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .strength-bar {
+            height: 3px;
+            background: #e1e5e9;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: #ff4757; width: 25%; }
+        .strength-fair { background: #ffa502; width: 50%; }
+        .strength-good { background: #2ed573; width: 75%; }
+        .strength-strong { background: #5352ed; width: 100%; }
+
+        .signup-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #00bcd4 0%, #00e5ff 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 25px 0 20px 0;
+        }
+
+        .signup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 188, 212, 0.3);
+        }
+
+        .signup-btn:active {
+            transform: translateY(0);
+        }
+
+        .signup-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            margin: 25px 0;
+            position: relative;
+            text-align: center;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e5e9;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            color: #00bcd4;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .login-link:hover {
+            color: #00e5ff;
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .terms {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .terms a {
+            color: #00bcd4;
+            text-decoration: none;
+        }
+
+        .terms a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 30px 25px;
+            }
+            
+            .signup-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="logo">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h1 class="signup-title">Join NewsGuard</h1>
+        <p class="signup-subtitle">Create your account to start detecting fake news</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/signup" id="signupForm">
+            <div class="form-group">
+                <i class="fas fa-user"></i>
+                <input type="text" name="username" class="form-input" placeholder="Username" required minlength="3">
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" name="email" class="form-input" placeholder="Email Address" required>
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="password" class="form-input" placeholder="Password" required minlength="6" id="password">
+                <div class="password-strength">
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <span id="strengthText">Password strength</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" name="confirm_password" class="form-input" placeholder="Confirm Password" required minlength="6" id="confirmPassword">
+            </div>
+
+            <button type="submit" class="signup-btn" id="submitBtn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="divider">
+            <span>Already have an account?</span>
+        </div>
+
+        <a href="/login" class="login-link">Sign In</a>
+
+        <div class="terms">
+            By creating an account, you agree to our Terms of Service and Privacy Policy.
+        </div>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const strengthFill = document.getElementById('strengthFill');
+        const strengthText = document.getElementById('strengthText');
+        const submitBtn = document.getElementById('submitBtn');
+
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = [];
+
+            if (password.length >= 6) strength += 1;
+            if (password.length >= 8) strength += 1;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength += 1;
+            if (/\d/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+            strengthFill.className = 'strength-fill';
+            
+            if (strength <= 1) {
+                strengthFill.classList.add('strength-weak');
+                strengthText.textContent = 'Weak password';
+            } else if (strength <= 2) {
+                strengthFill.classList.add('strength-fair');
+                strengthText.textContent = 'Fair password';
+            } else if (strength <= 3) {
+                strengthFill.classList.add('strength-good');
+                strengthText.textContent = 'Good password';
+            } else {
+                strengthFill.classList.add('strength-strong');
+                strengthText.textContent = 'Strong password';
+            }
+        }
+
+        function validateForm() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (password !== confirmPassword) {
+                confirmPasswordInput.setCustomValidity('Passwords do not match');
+                submitBtn.disabled = true;
+            } else {
+                confirmPasswordInput.setCustomValidity('');
+                submitBtn.disabled = false;
+            }
+        }
+
+        passwordInput.addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+            validateForm();
+        });
+
+        confirmPasswordInput.addEventListener('input', validateForm);
+
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            validateForm();
+            if (submitBtn.disabled) {
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

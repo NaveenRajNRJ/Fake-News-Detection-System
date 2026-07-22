@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Fake News Detection - NewsGuard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { 
+    font-family: 'Roboto', sans-serif; 
+    background: linear-gradient(135deg, #121212, #1e1e1e); 
+    color: white; 
+    min-height: 100vh;
+}
+
+.header {
+    background: rgba(30, 30, 30, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-icon {
+    font-size: 1.8rem;
+    color: #00e5ff;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00e5ff;
+}
+
+.user-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.welcome-text {
+    color: #ccc;
+    font-weight: 500;
+}
+
+.user-name {
+    color: #00e5ff;
+    font-weight: 600;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    background: linear-gradient(45deg, #ff5722, #f44336);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+
+h1 { 
+    color: #00bcd4; 
+    margin: 40px 0 20px; 
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.upload-section {
+    background: #1e1e1e; 
+    padding: 30px; 
+    border-radius: 20px; 
+    margin: 20px auto;
+    box-shadow: 0 15px 35px rgba(0,188,212,0.2);
+    text-align: center;
+}
+
+.file-upload-area {
+    border: 2px dashed #00bcd4;
+    border-radius: 15px;
+    padding: 40px 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: #00e5ff;
+    background: rgba(0, 188, 212, 0.05);
+}
+
+.file-upload-area.dragover {
+    border-color: #00e5ff;
+    background: rgba(0, 188, 212, 0.1);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    color: #00bcd4;
+    margin-bottom: 15px;
+}
+
+.upload-text {
+    font-size: 1.1rem;
+    color: #ccc;
+    margin-bottom: 10px;
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+input[type="file"] { 
+    display: none;
+}
+
+.file-info {
+    background: #2c2c2c;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    display: none;
+}
+
+.file-name {
+    color: #00e676;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.file-size {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+input[type="submit"] { 
+    background: linear-gradient(45deg, #00bcd4, #00e5ff);
+    color: #fff; 
+    cursor: pointer; 
+    font-weight: bold; 
+    transition: all 0.3s ease;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    margin-top: 15px;
+}
+
+input[type="submit"]:hover { 
+    background: linear-gradient(45deg, #00e5ff, #00bcd4);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 188, 212, 0.3);
+}
+
+input[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.error-message {
+    background: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+.success-message {
+    background: #4caf50;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.results-section {
+    margin-top: 30px;
+}
+
+.charts-section {
+    margin: 30px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.chart-container {
+    background: #1e1e1e;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.chart-title {
+    color: #00bcd4;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.chart-canvas {
+    max-height: 300px;
+    margin: 0 auto;
+}
+
+@media(max-width: 768px) {
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+.results-header {
+    background: #2c2c2c;
+    padding: 20px;
+    border-radius: 15px 15px 0 0;
+    text-align: center;
+}
+
+.results-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.stat-item {
+    background: rgba(0, 188, 212, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00bcd4;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    background: #1e1e1e; 
+    border-radius: 0 0 15px 15px; 
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+th, td { 
+    border: 1px solid #333; 
+    padding: 15px 12px; 
+    text-align: left; 
+    word-break: break-word; 
+}
+
+th { 
+    background: #00bcd4; 
+    color: white; 
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+tr:nth-child(even) { 
+    background: #2c2c2c; 
+}
+
+tr:hover {
+    background: #333;
+}
+
+.real { 
+    color: #4caf50; 
+    font-weight: bold;
+    padding: 5px 10px;
+    background: rgba(76, 175, 80, 0.1);
+    border-radius: 5px;
+}
+
+.fake { 
+    color: #f44336; 
+    font-weight: bold;
+    padding: 5px 10px;
+    background: rgba(244, 67, 54, 0.1);
+    border-radius: 5px;
+}
+
+.back-link { 
+    color: #00bcd4; 
+    text-decoration: none; 
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 30px 0;
+    padding: 12px 20px;
+    background: rgba(0, 188, 212, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.back-link:hover { 
+    background: rgba(0, 188, 212, 0.2);
+    transform: translateX(-5px);
+}
+
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.spinner {
+    border: 3px solid #333;
+    border-top: 3px solid #00bcd4;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@media(max-width: 768px) {
+    .header-content { 
+        flex-direction: column; 
+        gap: 10px; 
+    }
+    
+    .upload-section { 
+        padding: 20px 15px; 
+    }
+    
+    .file-upload-area {
+        padding: 30px 15px;
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+    }
+    
+    th, td { 
+        padding: 10px 8px; 
+        font-size: 0.9rem;
+    }
+    
+    .results-stats {
+        flex-direction: column;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-content">
+        <div class="logo-section">
+            <i class="fas fa-shield-alt logo-icon"></i>
+            <span class="logo-text">NewsGuard</span>
+        </div>
+        <div class="user-section">
+            <span class="welcome-text">Welcome, <span class="user-name">{{ username }}</span></span>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h1><i class="fas fa-upload"></i> Bulk Fake News Detection</h1>
+    
+    <div class="upload-section">
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
+            <div class="file-upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">CSV files only</div>
+                <input type="file" name="file" accept=".csv" required id="fileInput">
+            </div>
+            
+            <div class="file-info" id="fileInfo">
+                <div class="file-name" id="fileName"></div>
+                <div class="file-size" id="fileSize"></div>
+            </div>
+            
+            <input type="submit" value="Upload & Analyze" id="submitBtn">
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div>Analyzing your file... This may take a moment.</div>
+        </div>
+    </div>
+
+    {% if error %}
+    <div class="error-message">
+        <i class="fas fa-exclamation-triangle"></i> {{ error }}
+    </div>
+    {% endif %}
+
+    {% if result %}
+    <div class="success-message">
+        <i class="fas fa-check-circle"></i> File successfully uploaded and analyzed.
+    </div>
+    
+    <!-- Charts Dashboard -->
+    <div class="charts-section">
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-pie"></i>
+                Distribution Analysis
+            </div>
+            <canvas id="pieChart" class="chart-canvas"></canvas>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-title">
+                <i class="fas fa-chart-bar"></i>
+                Comparison Chart
+            </div>
+            <canvas id="barChart" class="chart-canvas"></canvas>
+        </div>
+    </div>
+    
+    <div class="results-section">
+        <div class="results-header">
+            <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+            <div class="results-stats">
+                <div class="stat-item">
+                    <div class="stat-number">{{ result|length }}</div>
+                    <div class="stat-label">Total Articles</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="realCount">{{ result|selectattr('1', 'equalto', 'REAL')|list|length }}</div>
+                    <div class="stat-label">Real News</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="fakeCount">{{ result|selectattr('1', 'equalto', 'FAKE')|list|length }}</div>
+                    <div class="stat-label">Fake News</div>
+                </div>
+            </div>
+        </div>
+        
+        <table>
+            <tr>
+                <th><i class="fas fa-newspaper"></i> News Article</th>
+                <th><i class="fas fa-search"></i> Prediction</th>
+            </tr>
+            {% for news, pred in result %}
+            <tr>
+                <td>{{ news[:200] }}{% if news|length > 200 %}...{% endif %}</td>
+                <td>
+                    <span class="{{ 'real' if pred=='REAL' else 'fake' }}">
+                        <i class="fas fa-{{ 'check' if pred=='REAL' else 'times' }}"></i>
+                        {{ pred }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+
+    <a href="/" class="back-link">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+</div>
+
+<script>
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const fileInfo = document.getElementById('fileInfo');
+const fileName = document.getElementById('fileName');
+const fileSize = document.getElementById('fileSize');
+const submitBtn = document.getElementById('submitBtn');
+const uploadForm = document.getElementById('uploadForm');
+const loading = document.getElementById('loading');
+
+// Click to upload
+uploadArea.addEventListener('click', () => fileInput.click());
+
+// Drag and drop functionality
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('dragover');
+});
+
+uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('dragover');
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+        handleFileSelect();
+    }
+});
+
+// File selection handler
+fileInput.addEventListener('change', handleFileSelect);
+
+function handleFileSelect() {
+    const file = fileInput.files[0];
+    if (file) {
+        fileName.textContent = file.name;
+        fileSize.textContent = `Size: ${(file.size / 1024 / 1024).toFixed(2)} MB`;
+        fileInfo.style.display = 'block';
+        submitBtn.disabled = false;
+        
+        // Check file type
+        if (!file.name.toLowerCase().endsWith('.csv')) {
+            alert('Please select a CSV file.');
+            fileInput.value = '';
+            fileInfo.style.display = 'none';
+            submitBtn.disabled = true;
+        }
+    }
+}
+
+// Form submission
+uploadForm.addEventListener('submit', (e) => {
+    if (fileInput.files.length === 0) {
+        e.preventDefault();
+        alert('Please select a file to upload.');
+        return;
+    }
+    
+    // Show loading
+    loading.style.display = 'block';
+    submitBtn.disabled = true;
+    submitBtn.value = 'Analyzing...';
+});
+
+// Initialize
+submitBtn.disabled = true;
+
+{% if result %}
+// Chart data from server
+const totalArticles = {{ result|length }};
+const realCount = {{ result|selectattr('1', 'equalto', 'REAL')|list|length }};
+const fakeCount = {{ result|selectattr('1', 'equalto', 'FAKE')|list|length }};
+
+// Create Pie Chart
+const pieCtx = document.getElementById('pieChart').getContext('2d');
+const pieChart = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+        labels: ['Real News', 'Fake News'],
+        datasets: [{
+            data: [realCount, fakeCount],
+            backgroundColor: [
+                '#4caf50',  // Green for Real
+                '#f44336'   // Red for Fake
+            ],
+            borderColor: [
+                '#2e7d32',
+                '#c62828'
+            ],
+            borderWidth: 2,
+            hoverOffset: 10
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#ffffff',
+                    font: {
+                        size: 14
+                    },
+                    padding: 20
+                }
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const percentage = ((context.parsed / totalArticles) * 100).toFixed(1);
+                        return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Create Bar Chart
+const barCtx = document.getElementById('barChart').getContext('2d');
+const barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Real News', 'Fake News'],
+        datasets: [{
+            label: 'Number of Articles',
+            data: [realCount, fakeCount],
+            backgroundColor: [
+                'rgba(76, 175, 80, 0.8)',  // Green for Real
+                'rgba(244, 67, 54, 0.8)'   // Red for Fake
+            ],
+            borderColor: [
+                '#4caf50',
+                '#f44336'
+            ],
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const percentage = ((context.parsed.y / totalArticles) * 100).toFixed(1);
+                        return 'Articles: ' + context.parsed.y + ' (' + percentage + '%)';
+                    }
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    color: '#ffffff',
+                    font: {
+                        size: 12
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            },
+            x: {
+                ticks: {
+                    color: '#ffffff',
+                    font: {
+                        size: 12
+                    }
+                },
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                }
+            }
+        }
+    }
+});
+
+// Add animation
+setTimeout(() => {
+    pieChart.update('active');
+    barChart.update('active');
+}, 500);
+
+{% endif %}
+</script>
+
+</body>
+</html>
